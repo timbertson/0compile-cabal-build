@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# A cabal-build wrapper for use by 0compile. The setup is:
+# $SRCDIR:   A read-only unpacked directory containing the source code
+# $BUILDDIR: A writeable temp dir
+# $DESTDIR:  A writeable destination dir which will become the published artifact.
+#            It is CRITICAL that no files in here reference $DESTDIR, as it must
+#            be relocatable.
+#
+# The process should *not* touch (or even read) ~/.cabal/*
+
+set -eux
+cd "$SRCDIR"
+
+# use a throwaway cabal config to isolate us from global config
+# TODO: do we need to allow user config to be used for e.g proxy setup?
+export CABAL_CONFIG="$BUILDDIR/cabal.conf"
+
+ghc-pkg init "$BUILDDIR/package.db.UNUSED"
+cabal configure -v --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$BUILDDIR/package.db.UNUSED" --with-compiler=ghc
+cabal build -v --builddir="$BUILDDIR"
+
+# copy takes its dest from the configured --prefix. If you specify it here, you end up
+# with double-paths like $PREFIX/$PREFIX/..."
+cabal copy --builddir="$BUILDDIR" --verbose=3
+
+# generate a pkg file in the $BUILDDIR, which we transform later
+cabal register --gen-pkg-config="$BUILDDIR/package.conf" --builddir="$BUILDDIR"
+
+set +x # You don't want to see this ;)
+echo "making package description prefix-independant.."
+
+# Totally hacky. I'd use sed, but then I have to worry about metachars.
+# And python is probably installed if you're using 0compile ;)
+python -c 'from __future__ import print_function;
+import os, sys;
+prefix=os.environ["DISTDIR"];
+for line in sys.stdin:
+	print(line.replace(prefix, "${pkgroot}"), end="")' < "$BUILDDIR/package.conf" > "$DISTDIR/package.conf"
+
+
+# preemptively check for hard coded paths.
+hard_coded_files=`fgrep -R -l "$DISTDIR" "$DISTDIR" || true`
+if [ -n "$hard_coded_files" ]; then
+	# TODO: this might be too strict when such paths are used only as
+	# defaults, but that's less likely than having missed something at this point
+	echo ''
+	echo 'ERROR: found $DISTDIR hard-coded in the following files:'
+	echo "$hard_coded_files"
+	echo ''
+	echo 'The resulting binary will NOT be relocatable.'
+	exit 1
+fi

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface xmlns="http://zero-install.sourceforge.net/2004/injector/interface" uri="http://gfxmonk.net/dist/0install/cabal-build.xml">
+	<name>cabal-build</name>
+	<summary>0install builder for cabal</summary>
+	<publish xmlns="http://gfxmonk.net/dist/0install" mode="0tools"/>
+	<description>
+		Wrapper script to build a cabal source package in a
+		0install-compatible way.
+	</description>
+	<group main="cabal-build">
+		<command name="run" path="cabal-build"/>
+		<requires interface="http://gfxmonk.net/dist/0install/cabal.xml"/>
+		<environment insert="" mode="prepend" name="PATH"/>
+		<implementation id="sha1new=502109e2122b2efd8812d2a619175c17a94a8d9c" released="2011-11-08" version="20111108.2224">
+			<manifest-digest sha256="bf730bc595cd111fe4cc12eedb8d0b6787ebf3d30970ac3448fde57174e928fe"/>
+			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20111108.2224.tgz" size="221"/>
+		</implementation>
+		<implementation id="sha1new=ddcbdd07e0d1cb9090b970f1213f21f2ec23996a" released="2012-05-27" version="20120527.1446">
+			<manifest-digest sha256="8339ad3713c15d40083c1d39fcbb31fb9e93541f8e43615d1bdf8d64258e33a9"/>
+			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120527.1446.tgz" size="1222"/>
+		</implementation>
+	</group>
+</interface>
