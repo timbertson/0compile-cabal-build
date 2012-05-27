@@ -11,6 +11,7 @@
 	<group main="cabal-build">
 		<command name="run" path="cabal-build"/>
 		<requires interface="http://gfxmonk.net/dist/0install/cabal.xml"/>
+		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml"/>
 		<environment insert="" mode="prepend" name="PATH"/>
 		<implementation id="sha1new=502109e2122b2efd8812d2a619175c17a94a8d9c" released="2011-11-08" version="20111108.2224">
 			<manifest-digest sha256="bf730bc595cd111fe4cc12eedb8d0b6787ebf3d30970ac3448fde57174e928fe"/>

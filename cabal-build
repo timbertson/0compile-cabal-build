@@ -32,7 +32,7 @@ cabal copy --builddir="$BUILDDIR"
 # note the --inplace - without this cabal will generate a package.conf
 # that can't actually be used for anything except registering it later
 # (which doesn't even seem to work for relocatable packages).
-cabal register -v --inplace --gen-pkg-config="$BUILDDIR/package.conf" --builddir="$BUILDDIR"
+cabal register -v --gen-pkg-config="$BUILDDIR/package.conf" --builddir="$BUILDDIR"
 
 set +x # You don't want to see this ;)
 echo "making package description prefix-independant.."
@@ -41,19 +41,24 @@ echo "making package description prefix-independant.."
 # And python is probably installed if you're using 0compile.
 python -c 'from __future__ import print_function;
 import os, sys;
-prefix=os.environ["DISTDIR"];
+prefixes=(os.environ["DISTDIR"], os.environ["BUILDDIR"]);
+replacement="${pkgroot}"
 for line in sys.stdin:
-	print(line.replace(prefix, "${pkgroot}"), end="")' < "$BUILDDIR/package.conf.inplace" > "$DISTDIR/package.conf"
+	for prefix in prefixes:
+		print("replacing %s with %s" % (prefix, replacement), file=sys.stderr)
+		line = line.replace(prefix, replacement)
+	line = line.replace(replacement + "/build", replacement + "/lib") # TODO: how does this happen?
+	print(line, end="")' < "$BUILDDIR/package.conf.inplace" > "$DISTDIR/package.conf"
 
 # preemptively check for hard coded paths.
-hard_coded_files=`fgrep -R -l "$DISTDIR" "$DISTDIR" || true`
+hard_coded_files=`fgrep -R "$DISTDIR" "$DISTDIR" || fgrep -R "$BUILDDIR" "$DISTDIR" || true`
 if [ -n "$hard_coded_files" ]; then
 	# TODO: this might be too strict when such paths are used only as
 	# defaults, but that's less likely than having missed something at this point
 	echo ''
-	echo 'ERROR: found $DISTDIR hard-coded in the following files:'
+	echo 'ERROR: found hard-coded in the following files:'
 	echo "$hard_coded_files"
 	echo ''
-	echo 'The resulting binary will NOT be relocatable.'
+	echo 'The resulting archive will NOT be relocatable.'
 	exit 1
 fi
