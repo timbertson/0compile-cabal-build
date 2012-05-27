@@ -16,28 +16,34 @@ cd "$SRCDIR"
 # TODO: do we need to allow user config to be used for e.g proxy setup?
 export CABAL_CONFIG="$BUILDDIR/cabal.conf"
 
-ghc-pkg init "$BUILDDIR/package.db.UNUSED"
-cabal configure -v --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$BUILDDIR/package.db.UNUSED" --with-compiler=ghc
+# cabal (or ghc?) really wants a package db
+# but doesn't do anything with it (and we do NOT want to include it in $DISTDIR)
+pkgdb="$BUILDDIR/package.d.UNUSED"
+ghc-pkg init "$pkgdb"
+
+cabal configure -v --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$pkgdb"
 cabal build -v --builddir="$BUILDDIR"
 
-# copy takes its dest from the configured --prefix. If you specify it here, you end up
-# with double-paths like $PREFIX/$PREFIX/..."
-cabal copy --builddir="$BUILDDIR" --verbose=3
+# copy takes its dest from the configured --prefix. If you specify --destdir here,
+# you end up with double-paths (i.e $PREFIX/$PREFIX/...)"
+cabal copy --builddir="$BUILDDIR"
 
-# generate a pkg file in the $BUILDDIR, which we transform later
-cabal register --gen-pkg-config="$BUILDDIR/package.conf" --builddir="$BUILDDIR"
+# generate a pkg file in the $BUILDDIR, which we transform later to be relocatable
+# note the --inplace - without this cabal will generate a package.conf
+# that can't actually be used for anything except registering it later
+# (which doesn't even seem to work for relocatable packages).
+cabal register -v --inplace --gen-pkg-config="$BUILDDIR/package.conf" --builddir="$BUILDDIR"
 
 set +x # You don't want to see this ;)
 echo "making package description prefix-independant.."
 
 # Totally hacky. I'd use sed, but then I have to worry about metachars.
-# And python is probably installed if you're using 0compile ;)
+# And python is probably installed if you're using 0compile.
 python -c 'from __future__ import print_function;
 import os, sys;
 prefix=os.environ["DISTDIR"];
 for line in sys.stdin:
-	print(line.replace(prefix, "${pkgroot}"), end="")' < "$BUILDDIR/package.conf" > "$DISTDIR/package.conf"
-
+	print(line.replace(prefix, "${pkgroot}"), end="")' < "$BUILDDIR/package.conf.inplace" > "$DISTDIR/package.conf"
 
 # preemptively check for hard coded paths.
 hard_coded_files=`fgrep -R -l "$DISTDIR" "$DISTDIR" || true`

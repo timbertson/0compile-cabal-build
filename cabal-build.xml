@@ -16,9 +16,9 @@
 			<manifest-digest sha256="bf730bc595cd111fe4cc12eedb8d0b6787ebf3d30970ac3448fde57174e928fe"/>
 			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20111108.2224.tgz" size="221"/>
 		</implementation>
-		<implementation id="sha1new=ddcbdd07e0d1cb9090b970f1213f21f2ec23996a" released="2012-05-27" version="20120527.1446">
-			<manifest-digest sha256="8339ad3713c15d40083c1d39fcbb31fb9e93541f8e43615d1bdf8d64258e33a9"/>
-			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120527.1446.tgz" size="1222"/>
+		<implementation id="sha1new=6b3df1e2792ae66c8da528d537ef5b2a590c9c52" released="2012-05-27" version="20120527.1641">
+			<manifest-digest sha256="d3cb82216ddabccd481fb3fdee9e7a5c1983680d32ca2f7bb66ac922ee20f4f6"/>
+			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120527.1641.tgz" size="1363"/>
 		</implementation>
 	</group>
 </interface>
