@@ -11,15 +11,13 @@
 	<group main="cabal-build">
 		<command name="run" path="cabal-build"/>
 		<requires interface="http://gfxmonk.net/dist/0install/cabal.xml"/>
-		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml"/>
+		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml">
+			<version not-before="7.2"/>
+		</requires>
 		<environment insert="" mode="prepend" name="PATH"/>
-		<implementation id="sha1new=502109e2122b2efd8812d2a619175c17a94a8d9c" released="2011-11-08" version="20111108.2224">
-			<manifest-digest sha256="bf730bc595cd111fe4cc12eedb8d0b6787ebf3d30970ac3448fde57174e928fe"/>
-			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20111108.2224.tgz" size="221"/>
-		</implementation>
-		<implementation id="sha1new=6b3df1e2792ae66c8da528d537ef5b2a590c9c52" released="2012-05-27" version="20120527.1641">
-			<manifest-digest sha256="d3cb82216ddabccd481fb3fdee9e7a5c1983680d32ca2f7bb66ac922ee20f4f6"/>
-			<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120527.1641.tgz" size="1363"/>
-		</implementation>
 	</group>
+	<implementation id="sha1new=425eb7285f1326f4dc01310c13cdf3a7e6d7e01a" released="2012-06-02" version="20120602.1309">
+		<manifest-digest sha256="913e2af302e5b50b4f1cc53ef921f6cc0cee01f4f70f72c74927c7dc8aa7861f"/>
+		<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120602.1309.tgz" size="1487"/>
+	</implementation>
 </interface>
