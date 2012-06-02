@@ -29,7 +29,8 @@ init_ghc_db ()
 
 init_ghc_db
 
-cabal configure -v --ghc --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$pkgdb"
+cabal configure -v --global --ghc --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$pkgdb" --libsubdir=''
+
 cabal build -v --builddir="$BUILDDIR"
 
 # copy takes its dest from the configured --prefix. If you specify --destdir here,
@@ -55,7 +56,6 @@ for line in sys.stdin:
 			first = False
 			print("replacing %s with %s" % (prefix, replacement), file=sys.stderr)
 		line = line.replace(prefix, replacement)
-	line = line.replace(replacement + "/build", replacement + "/lib") # TODO: how / why does this happen?
 	print(line, end="")' < "$BUILDDIR/package.cabal" > "$DISTDIR/package.cabal"
 
 set -x
