@@ -1,0 +1,20 @@
+<?xml version="1.0" ?><?xml-stylesheet type='text/xsl' href='interface.xsl'?><interface uri="http://gfxmonk.net/dist/0install/cabal-build.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+	<name>cabal-build</name>
+	<summary>0install builder for cabal</summary>
+	<publish mode="0tools" xmlns="http://gfxmonk.net/dist/0install"/>
+	<description>
+		Wrapper script to build a cabal source package in a
+		0install-compatible way.
+	</description>
+	<group main="cabal-build">
+		<command name="run" path="cabal-build"/>
+		<requires interface="http://gfxmonk.net/dist/0install/cabal.xml"/>
+		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml"/>
+		<requires interface="http://repo.roscidus.com/python/python">
+			<version before="3" not-before="2.7"/>
+		</requires>
+		<environment insert="" mode="prepend" name="PATH"/>
+		<environment insert="" mode="prepend" name="PYTHONPATH"/>
+	<implementation id="." version="20120602.1309-post"/></group>
+	
+<feed-for interface="http://gfxmonk.net/dist/0install/cabal-build.xml"/></interface>

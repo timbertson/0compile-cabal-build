@@ -11,10 +11,12 @@
 	<group main="cabal-build">
 		<command name="run" path="cabal-build"/>
 		<requires interface="http://gfxmonk.net/dist/0install/cabal.xml"/>
-		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml">
-			<version not-before="7.2"/>
+		<requires interface="http://gfxmonk.net/dist/0install/ghc.xml"/>
+		<requires interface="http://repo.roscidus.com/python/python">
+			<version before="3" not-before="2.7"/>
 		</requires>
 		<environment insert="" mode="prepend" name="PATH"/>
+		<environment insert="" mode="prepend" name="PYTHONPATH"/>
 	</group>
 	<implementation id="sha1new=425eb7285f1326f4dc01310c13cdf3a7e6d7e01a" released="2012-06-02" version="20120602.1309">
 		<manifest-digest sha256="913e2af302e5b50b4f1cc53ef921f6cc0cee01f4f70f72c74927c7dc8aa7861f"/>

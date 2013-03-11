@@ -12,69 +12,25 @@
 set -eux
 cd "$SRCDIR"
 
+# use a throwaway cabal dir
+export CABAL_ROOT="$BUILDDIR/_cabal"
+mkdir -p "$CABAL_ROOT"
+export CABAL_CONFIG="$CABAL_ROOT/config"
+cat > "$CABAL_CONFIG" <<EOF
+local-repo: $CABAL_ROOT/packages
+world-file: $CABAL_ROOT/world
+build-summary: $CABAL_ROOT/build.log
+package-db: $CABAL_ROOT/pkg-db
+EOF
+ghc-pkg init "$CABAL_ROOT/pkg-db"
 
-# use a throwaway cabal config to isolate us from global config
-# TODO: do we need to allow user config to be used for e.g proxy setup?
-export CABAL_CONFIG="$BUILDDIR/cabal.conf"
+# construct a cabal package repo just for this build:
+python -m cabal_repo "$CABAL_ROOT/packages"
 
-pkgdb="$DISTDIR/package.ghc"
-init_ghc_db ()
-{
-	# new-style folder + cache:
-	# ghc-pkg init "$pkgdb"
-
-	# simple old-style single text file
-	echo '[]' > "$pkgdb"
-}
-
-init_ghc_db
-
-cabal configure -v --global --ghc --builddir="$BUILDDIR" --prefix="$DISTDIR" --package-db="$pkgdb" --libsubdir=''
-
-cabal build -v --builddir="$BUILDDIR"
-
-# copy takes its dest from the configured --prefix. If you specify --destdir here,
-# you end up with double-paths (i.e $PREFIX/$PREFIX/...)"
-cabal copy --builddir="$BUILDDIR"
-
-# generate a pkg file in the $BUILDDIR, which we transform later to be relocatable
-cabal register -v --gen-pkg-config="$BUILDDIR/package.cabal" --builddir="$BUILDDIR"
-
-set +x # You don't want to see this ;)
-echo "making package description prefix-independant.."
-
-# Totally hacky. I'd use sed, but then I have to worry about metachars.
-# And python is probably installed if you're using 0compile.
-python -c 'from __future__ import print_function;
-import os, sys;
-prefixes=(os.environ["DISTDIR"], os.environ["BUILDDIR"]);
-replacement="${pkgroot}"
-first=True
-for line in sys.stdin:
-	for prefix in prefixes:
-		if first:
-			first = False
-			print("replacing %s with %s" % (prefix, replacement), file=sys.stderr)
-		line = line.replace(prefix, replacement)
-	print(line, end="")' < "$BUILDDIR/package.cabal" > "$DISTDIR/package.cabal"
-
-set -x
-# not sure if `cabal configure` does anything to this db, but just to be sure it's clean
-rm -rf "$pkgdb"
-init_ghc_db
-ghc-pkg register -v --package-conf="$pkgdb" "$DISTDIR/package.cabal"
-
+export HOME="$BUILDDIR/fake_homedir" # make sure cabal doesn't mess with our home dir
+cabal install --one-shot -v --builddir="$BUILDDIR" --prefix="$DISTDIR" --libsubdir='' "$@"
 
 set +x
-# preemptively check for hard coded paths.
-hard_coded_files=`fgrep -R "$DISTDIR" "$DISTDIR" || fgrep -R "$BUILDDIR" "$DISTDIR" || true`
-if [ -n "$hard_coded_files" ]; then
-	# TODO: this might be too strict when such paths are used only as
-	# defaults, but that's less likely than having missed something at this point
-	echo ''
-	echo 'ERROR: found hard-coded in the following files:'
-	echo "$hard_coded_files"
-	echo ''
-	echo 'The resulting archive will NOT be relocatable.'
-	exit 1
+if p -d "$HOME"; then
+	echo "WARNING: $HOME was populated! This shouldn't happen"
 fi
