@@ -31,6 +31,6 @@ export HOME="$BUILDDIR/fake_homedir" # make sure cabal doesn't mess with our hom
 cabal install --one-shot -v --builddir="$BUILDDIR" --prefix="$DISTDIR" --libsubdir='' "$@"
 
 set +x
-if p -d "$HOME"; then
+if [ -d "$HOME" ]; then
 	echo "WARNING: $HOME was populated! This shouldn't happen"
 fi
