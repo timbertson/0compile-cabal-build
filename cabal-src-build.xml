@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface xmlns="http://zero-install.sourceforge.net/2004/injector/interface" uri="http://gfxmonk.net/dist/0install/cabal-build.xml">
+<interface xmlns="http://zero-install.sourceforge.net/2004/injector/interface" uri="http://gfxmonk.net/dist/0install/cabal-src-build.xml">
 	<name>cabal-build</name>
 	<summary>0install builder for cabal</summary>
 	<publish xmlns="http://gfxmonk.net/dist/0install" mode="0tools"/>
@@ -18,8 +18,8 @@
 		<environment insert="" mode="prepend" name="PATH"/>
 		<environment insert="" mode="prepend" name="PYTHONPATH"/>
 	</group>
-	<implementation id="sha1new=425eb7285f1326f4dc01310c13cdf3a7e6d7e01a" released="2012-06-02" version="20120602.1309">
-		<manifest-digest sha256="913e2af302e5b50b4f1cc53ef921f6cc0cee01f4f70f72c74927c7dc8aa7861f"/>
-		<archive href="http://gfxmonk.net/dist/0install/cabal-build/cabal-build-20120602.1309.tgz" size="1487"/>
+	<implementation id="sha1new=d415b214fa9d1b9c1c73bb9f06c0dc819875d916" released="2013-03-11" version="0.1">
+		<manifest-digest sha256new="N7VHHQRSAL7DKNUIJMDKEINX6BV3IANG6VDDIVZWH5NVWXNVOYOQ"/>
+		<archive href="http://gfxmonk.net/dist/0install/cabal-src-build/cabal-src-build-0.1.tgz" size="2104"/>
 	</implementation>
 </interface>
